@@ -15,6 +15,7 @@ class Motor:
         self.gear_ratio = gear_ratio
         self.degrees = 0
         self.pulse_degrees = motor_step_degrees / gear_ratio
+        self.turn_degrees(10)
 
     def step(self):
         GPIO.output(self.pulse_pin, GPIO.HIGH)
