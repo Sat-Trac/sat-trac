@@ -9,11 +9,15 @@ class APIClass:
         response = requests.get(link)
         if response:
             self.retString = "Azimuth & Elevation Info"
+            self.azArray = []
+            self.elArray = []
             r_dict = response.json()
             for i in range(0, 300):
                 self.retString = self.retString + "\n" + "Azimuth: " + str(
                     r_dict["positions"][i]["azimuth"]) + "; Elevation: " + str(
                     r_dict["positions"][i]["elevation"]) + ";"
+                self.azArray.append(r_dict["positions"][i]["azimuth"])
+                self.elArray.append(r_dict["positions"][i]["elevation"])
         else:
             print("Error: Something went wrong, try again.")
             exit()
@@ -21,6 +25,13 @@ class APIClass:
     def __str__(self):
         return self.retString
 
+    def getAzimuthArray(self):
+        return self.azArray
+
+    def getElevationArray(self):
+        return self.elArray
+
 
 api = APIClass()
-print(api.__str__())
+print(api.getAzimuthArray())
+print(api.getElevationArray())
