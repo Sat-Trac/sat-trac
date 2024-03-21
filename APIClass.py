@@ -1,5 +1,6 @@
 import requests
 
+# My tests allowed my to pull 3600 seconds! Maybe more? Even though the doc says 3oo limit
 
 class APIClass:
     def __init__(self):
