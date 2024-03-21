@@ -1,8 +1,10 @@
 from time import sleep
 import RPi.GPIO as GPIO
 
+# Need to 
 
 class Motor:
+    current_position = 0
     FORWARD = GPIO.LOW
     REVERSE = GPIO.HIGH
     DELAY = 0.001
@@ -24,6 +26,9 @@ class Motor:
         sleep(self.DELAY)
 
     def turn_degrees(self, degrees_to_turn):
+
+        #needs to update current position
+        
         if degrees_to_turn > 0:
             direction = self.FORWARD
         else:
@@ -35,6 +40,10 @@ class Motor:
             self.step()
         self.disable_motor()
 
+    def turn_to_heading(self, target):
+        # This should use current_position and turn_degrees to go to a specific angle
+        pass
+
     def enable_motor(self):
         GPIO.output(self.enable_pin, GPIO.LOW)
 
@@ -43,3 +52,11 @@ class Motor:
 
     def set_motor_direction(self, direction):
         GPIO.output(self.direction_pin, direction)
+
+    def set_to_zero(self):
+        current_position = 0
+        pass
+
+    def goto_zero(self):
+        # move the moter from the current position to zero
+        pass
