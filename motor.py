@@ -54,7 +54,7 @@ class Motor:
     def set_motor_direction(self, direction):
         GPIO.output(self.direction_pin, direction)
 
-    def set_to_zero(self):
+    def set_zero(self):
         current_position = 0
         pass
 
