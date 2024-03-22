@@ -38,15 +38,15 @@ print('ENA = GPIO 22 - RPi 3B-Pin #15')
 print('Initialization Completed')
 #
 # Could have usesd only one DURATION constant but chose two. This gives play options.
-durationFwd = 50*50 # This is the duration of the motor spinning. used for forward direction
-durationBwd = 50*50 # This is the duration of the motor spinning. used for reverse direction
+durationFwd = 6400 # This is the duration of the motor spinning. used for forward direction
+durationBwd = 6400 # This is the duration of the motor spinning. used for reverse direction
 print('Duration Fwd set to ' + str(durationFwd))
 print('Duration Bwd set to ' + str(durationBwd))
 #
-delay = 0.001 # This is actualy a delay between PUL pulses - effectively sets the mtor rotation speed.
+delay = 0.0001 # This is actualy a delay between PUL pulses - effectively sets the mtor rotation speed.
 print('Speed set to ' + str(delay))
 #
-cycles = 2 # This is the number of cycles to be run once program is started.
+cycles = 1 # This is the number of cycles to be run once program is started.
 cyclecount = 0 # This is the iteration of cycles to be run once program is started.
 print('number of Cycles to Run set to ' + str(cycles))
 #
