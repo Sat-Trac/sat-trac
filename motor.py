@@ -35,7 +35,7 @@ class Motor:
             direction = self.REVERSE
         self.enable_motor()
         self.set_motor_direction(direction)
-        for x in range(0, degrees_to_turn, self.motor_step_degrees):
+        for x in [x * self.motor_step_degrees for x in range(0, degrees_to_turn)]:
             print(x)
             self.step()
         self.disable_motor()
