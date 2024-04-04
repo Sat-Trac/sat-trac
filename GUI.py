@@ -1,6 +1,6 @@
 import tkinter as tk
 import Storage as storage
-
+#from motor import Motor
 
 class HoldButton:
     def __init__(self, host, command=None, delay=None, **kwargs):  # Delay in ms
@@ -10,13 +10,14 @@ class HoldButton:
         self.__button.bind("<ButtonPress>", func=self.start)
         self.__button.bind("<ButtonRelease>", func=self.stop)
         self.__delay = delay
-        self.__command = command
+        self.__commands = command
         self.__timeon = 0
 
     def start(self, *args):
         print(f"On for: {self.__timeon}ms")
-        if(self.__command is not None):
-            self.__command()
+        if(self.__commands is not None):
+            for command in self.__commands:
+                command()
         if(self.__delay is not None):
             self.__timeon += self.__delay
             self.__after = self.__host.after(self.__delay, self.start)
@@ -50,8 +51,6 @@ class GUI:
         HoldButton(self.motorGUI, text="Every 500ms", delay=500)
         HoldButton(self.motorGUI, text="Every 1000ms", delay=1000)
         tk.mainloop()
-
-
 
 if __name__ == '__main__':
     gui = GUI()
