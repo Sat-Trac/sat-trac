@@ -14,3 +14,10 @@ class Storage:
                 os.environ[key]
             except(KeyError):
                 print("Bad Key")
+
+    def getKey(self, key):
+        return os.environ[key]
+
+    def setKey(self, key, value):
+        dotenv.set_key(dotenv_path=".env", key_to_set=key, value_to_set=value)
+        os.environ[key] = value
