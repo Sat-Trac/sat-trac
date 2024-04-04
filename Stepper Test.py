@@ -10,16 +10,27 @@
 #
 from time import sleep
 import RPi.GPIO as GPIO
+from motor import Motor
+
+
+# MOTOR 2
+PUL = 16  # Stepper Drive Pulses
+DIR = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
+ENA = 21  # Controller Enable Bit (High to Enable / LOW to Disable).
+
+motor = Motor(ENA, PUL, DIR, 1.8, 50)
+sleep(10)
+
+
+
+
 
 # MOTOR 1
 #PUL = 17  # Stepper Drive Pulses
 #DIR = 27  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
 #ENA = 22  # Controller Enable Bit (High to Enable / LOW to Disable).
 
-# MOTOR 2
-PUL = 16  # Stepper Drive Pulses
-DIR = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
-ENA = 21  # Controller Enable Bit (High to Enable / LOW to Disable).
+
 
 
 GPIO.setmode(GPIO.BCM)

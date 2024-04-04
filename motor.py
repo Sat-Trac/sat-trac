@@ -1,18 +1,20 @@
 from time import sleep
 import RPi.GPIO as GPIO
 
-# Need to 
+
+# Need to
 
 class Motor:
-    current_position = 0
-    FORWARD = GPIO.LOW
-    REVERSE = GPIO.HIGH
-    DELAY = 0.001
+    current_position: float = 0
+    FORWARD: int = GPIO.LOW
+    REVERSE: int = GPIO.HIGH
+    current_direction = FORWARD
+    DELAY: float = 0.001
 
     def __init__(self, enable_pin, pulse_pin, direction_pin, motor_step_degrees=0, gear_ratio=0):
         self.enable_pin = enable_pin
         self.pulse_pin = pulse_pin
-        self.direction_pin = direction_pin;
+        self.direction_pin = direction_pin
         self.motor_step_degrees = motor_step_degrees
         self.gear_ratio = gear_ratio
         self.degrees = 0
@@ -22,13 +24,17 @@ class Motor:
     def step(self):
         GPIO.output(self.pulse_pin, GPIO.HIGH)
         sleep(self.DELAY)
+        if self.current_direction == Motor.FORWARD:
+            self.current_position += self.motor_step_degrees
+        else:
+            self.current_position -= self.motor_step_degrees
         GPIO.output(self.pulse_pin, GPIO.LOW)
         sleep(self.DELAY)
 
     def turn_degrees(self, degrees_to_turn):
 
-        #needs to update current position
-        
+        # needs to update current position
+
         if degrees_to_turn > 0:
             direction = self.FORWARD
         else:
@@ -36,7 +42,6 @@ class Motor:
         self.enable_motor()
         self.set_motor_direction(direction)
         for x in [x * self.motor_step_degrees for x in range(0, degrees_to_turn)]:
-            print(x)
             self.step()
         self.disable_motor()
 
@@ -52,10 +57,11 @@ class Motor:
         GPIO.output(self.enable_pin, GPIO.HIGH)
 
     def set_motor_direction(self, direction):
+        self.current_direction = direction
         GPIO.output(self.direction_pin, direction)
 
     def set_zero(self):
-        current_position = 0
+        self.current_position = 0
         pass
 
     def goto_zero(self):
