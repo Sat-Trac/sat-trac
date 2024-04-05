@@ -1,10 +1,3 @@
-# Based on: https://www.raspberrypi.org/forums/viewtopic.php?t=242928\.
-#
-# Software to drive 4 wire stepper motor using a TB6600 Driver
-# PRi - RPi 3B
-#
-# Route 3.3 VDC to the controller "+" input for each: ENA, PUL, and DIR
-#
 # Connect GPIO pins as shown below) to the "-" input for each: ENA, PUL, and DIR
 #
 #
@@ -18,10 +11,8 @@ PUL = 16  # Stepper Drive Pulses
 DIR = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
 ENA = 21  # Controller Enable Bit (High to Enable / LOW to Disable).
 
-motor = Motor(ENA, PUL, DIR, 1.8, 50)
+motor = Motor(ENA, PUL, DIR, 1.8, 1)  #Changed ratio to 1 for trial
 sleep(10)
-
-
 
 
 
