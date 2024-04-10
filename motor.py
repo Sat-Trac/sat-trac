@@ -2,7 +2,7 @@ from time import sleep
 import RPi.GPIO as GPIO
 import math
 
-# Need to
+# Need to generate inherited classes.
 
 class Motor:
     current_position: float = 0
