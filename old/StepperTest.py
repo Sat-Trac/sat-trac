@@ -3,7 +3,7 @@
 #
 from time import sleep
 import RPi.GPIO as GPIO
-from motor import Motor
+from Motor import Motor
 
 
 # MOTOR 1
