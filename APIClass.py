@@ -1,6 +1,8 @@
 import requests
 
 # Let's get a method to return the time as the key and value of a tuple containing alt and az
+# Perhaps allow the method call to specify the amount of data retrieved.
+
 
 class APIClass:
     def __init__(self):

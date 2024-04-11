@@ -1,10 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
+### Need to set up AltMotor and AzMotor Objects upon start ###
+
+
 class App:
     def __init__(self, root):
         #setting title
-        root.title("undefined")
+        root.title("Satellite Tracker")
         #setting window size
         width=599
         height=225
@@ -235,58 +238,75 @@ class App:
         lbl_zulu_time.place(x=530,y=190,width=70,height=25)
 
     def btn_zero_all_command(self):
+        # reset current altitude and azimuth positions to zero
         print("command")
 
 
     def btn_zero_az_command(self):
+        # reset current azimuth position to zero
         print("command")
 
 
     def btn_zero_alt_command(self):
+        # reset current altitude position to zero
         print("command")
 
 
     def rad_jog_speed_1_command(self):
+        # probably don't need any code here
         print("command")
 
 
     def rad_jog_speed_2_command(self):
+        # probably don't need any code here
         print("command")
 
 
     def rad_jog_speed_3_command(self):
+        # probably don't need any code here
         print("command")
 
 
     def btn_alt_minus_command(self):
+        # move the altitude negative by the amount selected in the jog speed radio buttons
         print("command")
 
 
     def btn_alt_plus_command(self):
+        # move the altitude positive by the amount selected in the jog speed radio buttons
         print("command")
 
 
     def btn_goto_zero_command(self):
+        # move the altitude and azimuth to zero positions
         print("command")
 
 
     def btn_get_tracking_data_command(self):
+        # use the api class methods to retrieve a set of data to use in tracking
         print("command")
 
 
     def btn_go_command(self):
+        # this button should be disabled until tracking data is retrieved
+        # once pushed, all other buttons should be disabled except for STOP
+        # it should look up the current time in the tracking data then use the
+        # AltMotor and AzMotor methods to go to the correct position
         print("command")
 
 
     def btn_stop_command(self):
+        # This should stop all movement immediately and re-enable other buttons on the form
         print("command")
 
 
     def btn_az_plus_command(self):
+        # move the azimuth positive by the amount selected in the jog speed radio buttons
         print("command")
 
 
     def btn_az_minus_command(self):
+        # move the azimuth negative by the amount selected in the jog speed radio buttons
         print("command")
 
 if __name__ == "__main__":
