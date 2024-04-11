@@ -3,7 +3,8 @@
 #
 from time import sleep
 import RPi.GPIO as GPIO
-from Motor import Motor
+from motor import Motor
+from APIClass import APIClass
 
 
 # MOTOR 1
@@ -32,6 +33,18 @@ motor2.__turn_to_degree(18)
 motor1.__turn_to_degree(-18)
 motor1.__turn_to_degree(-18)
 sleep(1)
+elevation_motor = Motor(ENA1, PUL1, DIR1, 6400, 1)  #Changed ratio to 1 for trial
+azimuth_motor = Motor(ENA2, PUL2, DIR2, 6400, 1)
+
+info = APIClass()
+while(True):
+    elv = info.getNextInfo()[0]
+    azi = info.getNextInfo()[1]
+    
+    elevation_motor.__turn_to_degree(elv)
+    sleep(0.5)
+    azimuth_motor.__turn_to_degree(azi)
+    sleep(0.5)
 
 GPIO.cleanup()
 print('Cycling Completed')
