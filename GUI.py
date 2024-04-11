@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
+import AzMotor
 ### Need to set up AltMotor and AzMotor Objects upon start ###
 
 
@@ -9,7 +10,7 @@ class App:
         #setting title
         root.title("Satellite Tracker")
         #setting window size
-        width=599
+        width=600
         height=225
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
@@ -64,6 +65,7 @@ class App:
         rad_jog_speed_1.place(x=110,y=110,width=85,height=25)
         rad_jog_speed_1["value"] = ".1"
         rad_jog_speed_1["command"] = self.rad_jog_speed_1_command
+        rad_jog_speed_1.select()
 
         rad_jog_speed_2=tk.Radiobutton(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -286,7 +288,6 @@ class App:
         # use the api class methods to retrieve a set of data to use in tracking
         print("command")
 
-
     def btn_go_command(self):
         # this button should be disabled until tracking data is retrieved
         # once pushed, all other buttons should be disabled except for STOP
@@ -312,4 +313,15 @@ class App:
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
+    PUL1 = 16  # Stepper Drive Pulses
+    DIR1 = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
+    ENA1 = 21
+    az = AzMotor.AzMotor(ENA1, PUL1, DIR1, 6400, 1)
+
+    az.go_to_azimith(50)
+    az.go_to_azimith(270)
+
     root.mainloop()
+
+
+

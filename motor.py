@@ -45,15 +45,18 @@ class Motor:
             direction = self.REVERSE
         self.enable_motor()
         self.set_motor_direction(direction)
-        pulses_to_move = int(math.fabs(degrees_to_turn / self.pulses_per_degree) + 1)
+        pulses_to_move = int(round(math.fabs(degrees_to_turn / self.pulses_per_degree)))
         for x in range(pulses_to_move):
             self.step()
         self.disable_motor()
 
-        print(self.current_position);
+        print(self.current_position)
 
-    def turn_to_degree(self, target_angle):
-        degrees_to_travel = self.current_position - target_angle
+    def __turn_to_degree(self, target_angle, wrap=False):
+        if not wrap:
+            degrees_to_travel = self.current_position - target_angle
+        else:
+            degrees_to_travel = self.current_position % 360 - target_angle
 
         self.turn_degrees(degrees_to_travel)
 
@@ -71,4 +74,4 @@ class Motor:
         self.current_position = 0
 
     def goto_zero(self):
-        self.turn_to_degree(0)
+        self.__turn_to_degree(0)
