@@ -2,11 +2,22 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 import AzMotor
+import AltMotor
+import time
+import RPi.GPIO as GPIO
 ### Need to set up AltMotor and AzMotor Objects upon start ###
 
 
 class App:
     def __init__(self, root):
+        PUL2 = 16  # Stepper Drive Pulses
+        DIR2 = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
+        ENA2 = 21
+        PUL1 = 17  # Stepper Drive Pulses
+        DIR1 = 27  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
+        ENA1 = 22 
+        self.az = AzMotor.AzMotor(ENA1, PUL1, DIR1, 6400, 1)
+        self.alt = AltMotor.AltMotor(ENA2, PUL2, DIR2,6400, 1)
         #setting title
         root.title("Satellite Tracker")
         #setting window size
@@ -289,6 +300,19 @@ class App:
         print("command")
 
     def btn_go_command(self):
+        time.sleep(1)
+        self.az.go_to_azimith(10)
+        time.sleep(1)
+        self.az.go_to_azimith(180)
+        time.sleep(1)
+        self.az.go_to_azimith(250)
+        time.sleep(1)
+        self.alt.turn_to_altitude(10)
+        time.sleep(1)
+        self.alt.turn_to_altitude(180)
+        time.sleep(1)
+        self.alt.turn_to_altitude(250)
+        
         # this button should be disabled until tracking data is retrieved
         # once pushed, all other buttons should be disabled except for STOP
         # it should look up the current time in the tracking data then use the
@@ -297,6 +321,8 @@ class App:
 
 
     def btn_stop_command(self):
+        GPIO.cleanup()
+        exit()
         # This should stop all movement immediately and re-enable other buttons on the form
         print("command")
 
@@ -307,20 +333,19 @@ class App:
 
 
     def btn_az_minus_command(self):
+        print(time.perf_counter())
+        #self.az.turn_degrees(1)
+        #root.after(1, lambda: app.btn_az_minus_command())
+        #print(time.perf_counter())
         # move the azimuth negative by the amount selected in the jog speed radio buttons
-        print("command")
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
-    PUL1 = 16  # Stepper Drive Pulses
-    DIR1 = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
-    ENA1 = 21
-    az = AzMotor.AzMotor(ENA1, PUL1, DIR1, 6400, 1)
+    
 
-    az.go_to_azimith(50)
-    az.go_to_azimith(270)
-
+    #root.after(100, lambda: app.btn_az_minus_command())
+    
     root.mainloop()
 
 

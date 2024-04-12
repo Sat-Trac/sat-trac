@@ -13,6 +13,7 @@ class Motor:
     DELAY: float = 0.001
 
     def __init__(self, enable_pin, pulse_pin, direction_pin, steps_per_rotation=0, gear_ratio=0):
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(pulse_pin, GPIO.OUT)
         GPIO.setup(direction_pin, GPIO.OUT)
         GPIO.setup(enable_pin, GPIO.OUT)
@@ -32,12 +33,11 @@ class Motor:
             self.current_position += self.pulses_per_degree
         else:
             self.current_position -= self.pulses_per_degree
+        self.current_position %= 360
         GPIO.output(self.pulse_pin, GPIO.LOW)
         sleep(self.DELAY)
 
     def turn_degrees(self, degrees_to_turn):
-
-        print(self.current_position)
 
         if degrees_to_turn <= 0:
             direction = self.FORWARD
@@ -50,15 +50,21 @@ class Motor:
             self.step()
         self.disable_motor()
 
-        print(self.current_position)
 
-    def __turn_to_degree(self, target_angle, wrap=False):
+    def turn_to_degrees(self, target_angle, wrap=False):
+        print(self.current_position)
         if not wrap:
             degrees_to_travel = self.current_position - target_angle
         else:
-            degrees_to_travel = self.current_position % 360 - target_angle
+            degree_distance = self.current_position - target_angle;
+            if degree_distance <= 180:
+                degrees_to_travel = self.current_position - target_angle
+            else:
+                degrees_to_travel = self.current_position - (math.ceil(self.current_position/360) * 360) - target_angle
+        print(degrees_to_travel)
 
         self.turn_degrees(degrees_to_travel)
+        print(self.current_position)
 
     def enable_motor(self):
         GPIO.output(self.enable_pin, GPIO.LOW)
@@ -74,4 +80,4 @@ class Motor:
         self.current_position = 0
 
     def goto_zero(self):
-        self.__turn_to_degree(0)
+        self.turn_to_degrees(0)
