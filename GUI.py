@@ -1,10 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
-import AzMotor
-import AltMotor
+from AzMotor import AzMotor 
+from AltMotor import AltMotor 
 import time
 import RPi.GPIO as GPIO
+from APIClass import APIClass 
+from datetime import datetime
+
 ### Need to set up AltMotor and AzMotor Objects upon start ###
 
 
@@ -16,8 +19,8 @@ class App:
         PUL1 = 17  # Stepper Drive Pulses
         DIR1 = 27  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
         ENA1 = 22 
-        self.az = AzMotor.AzMotor(ENA1, PUL1, DIR1, 6400, 1)
-        self.alt = AltMotor.AltMotor(ENA2, PUL2, DIR2,6400, 1)
+        self.az = AzMotor(ENA1, PUL1, DIR1, 6400, 1)
+        self.alt = AltMotor(ENA2, PUL2, DIR2,6400, 1)
         #setting title
         root.title("Satellite Tracker")
         #setting window size
@@ -296,29 +299,21 @@ class App:
 
 
     def btn_get_tracking_data_command(self):
+        
+        self.satellite_data = APIClass()
+        
         # use the api class methods to retrieve a set of data to use in tracking
-        print("command")
 
     def btn_go_command(self):
-        time.sleep(1)
-        self.az.go_to_azimith(10)
-        time.sleep(1)
-        self.az.go_to_azimith(180)
-        time.sleep(1)
-        self.az.go_to_azimith(250)
-        time.sleep(1)
-        self.alt.turn_to_altitude(10)
-        time.sleep(1)
-        self.alt.turn_to_altitude(180)
-        time.sleep(1)
-        self.alt.turn_to_altitude(250)
+        self.stop = False
+        self.track_satellite()
+        
         
         # this button should be disabled until tracking data is retrieved
         # once pushed, all other buttons should be disabled except for STOP
         # it should look up the current time in the tracking data then use the
         # AltMotor and AzMotor methods to go to the correct position
-        print("command")
-
+        
 
     def btn_stop_command(self):
         GPIO.cleanup()
@@ -332,12 +327,25 @@ class App:
         print("command")
 
 
+
     def btn_az_minus_command(self):
-        print(time.perf_counter())
-        #self.az.turn_degrees(1)
-        #root.after(1, lambda: app.btn_az_minus_command())
-        #print(time.perf_counter())
         # move the azimuth negative by the amount selected in the jog speed radio buttons
+        print("command")
+        
+    def track_satellite(self):
+        if(self.stop):
+            return
+        next_data = self.satellite_data.getNextInfo()
+        #while(time.time() <= next_data[2]):
+            
+            #pass
+        print(next_data[0], next_data[1])
+        self.az.go_to_azimith(next_data[0])
+        self.alt.turn_to_altitude(next_data[1])
+        root.after(10, lambda: self.track_satellite())
+        
+        
+        
 
 if __name__ == "__main__":
     root = tk.Tk()

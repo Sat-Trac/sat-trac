@@ -15,12 +15,14 @@ class APIClass:
             self.r_dict = response.json()
             self.azList = []
             self.elList = []
+            self.time_stamp = []
             for i in range(0, length):
                 self.retString = self.retString + "\n" + "Azimuth: " + str(
                     self.r_dict["positions"][i]["azimuth"]) + "; Elevation: " + str(
                     self.r_dict["positions"][i]["elevation"]) + ";"
                 self.azList.append(self.r_dict["positions"][i]["azimuth"])
                 self.elList.append(self.r_dict["positions"][i]["elevation"])
+                self.time_stamp.append(self.r_dict["positions"][i]["timestamp"])
         else:
             print("Error: Something went wrong, try again.")
             exit()
@@ -30,7 +32,7 @@ class APIClass:
         return self.retString
     
     def getNextInfo(self):
-        return (self.azList.pop(0), self.elList.pop(0))
+        return (self.azList.pop(0), self.elList.pop(0), self.time_stamp.pop(0))
 
     def getAzimuthArray(self):
         return self.azArray
