@@ -48,7 +48,6 @@ class Motor:
         pulses_to_move = int(round(math.fabs(degrees_to_turn / self.pulses_per_degree)))
         for x in range(pulses_to_move):
             self.step()
-        self.disable_motor()
 
 
     def turn_to_degrees(self, target_angle, wrap=False):
@@ -56,14 +55,13 @@ class Motor:
         if not wrap:
             
             degrees_to_travel = self.current_position - target_angle
-            print(degrees_to_travel, target_angle)
+            
         else:
             degree_distance = self.current_position - target_angle;
-            if degree_distance <= 180:
+            if abs(degree_distance) <= 180:
                 degrees_to_travel = self.current_position - target_angle
             else:
                 degrees_to_travel = self.current_position - (math.ceil(self.current_position/360) * 360) - target_angle
-
         self.turn_degrees(degrees_to_travel)
 
     def enable_motor(self):

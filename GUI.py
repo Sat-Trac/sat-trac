@@ -316,6 +316,9 @@ class App:
         
 
     def btn_stop_command(self):
+        self.stop = True;
+        self.az.disable_motor()
+        self.alt.disable_motor()
         GPIO.cleanup()
         exit()
         # This should stop all movement immediately and re-enable other buttons on the form
@@ -337,12 +340,12 @@ class App:
             return
         next_data = self.satellite_data.getNextInfo()
         #while(time.time() <= next_data[2]):
-            
-            #pass
+        #    if(self.stop):
+        #         return
         print(next_data[0], next_data[1])
         self.az.go_to_azimith(next_data[0])
         self.alt.turn_to_altitude(next_data[1])
-        root.after(10, lambda: self.track_satellite())
+        root.after(50, lambda: self.track_satellite())
         
         
         
