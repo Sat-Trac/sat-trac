@@ -5,17 +5,22 @@ import requests
 
 
 class APIClass:
-    def __init__(self):
+    def __init__(self, sat_id):
+        if(not sat_id.isnumeric()):
+            print("Invalid Satellite Tracking ID")
+            return
         length = 3600*2
-        link = f'https://api.n2yo.com/rest/v1/satellite/positions/25544/41.5291/-84.306728/223/{length}/&apiKey=84KF72-KBE76V-3TF4JS-585A'
+        link = f'https://api.n2yo.com/rest/v1/satellite/positions/{sat_id}/41.4591/-84.306728/223/{length}/&apiKey=84KF72-KBE76V-3TF4JS-585A'
         response = requests.get(link)
         if response:
+            
             self.retString = "Azimuth & Elevation Info"
 
             self.r_dict = response.json()
             self.azList = []
             self.elList = []
             self.time_stamp = []
+            self.satellite_name = self.r_dict["info"]["satname"]
             for i in range(0, length):
                 self.retString = self.retString + "\n" + "Azimuth: " + str(
                     self.r_dict["positions"][i]["azimuth"]) + "; Elevation: " + str(
@@ -25,20 +30,25 @@ class APIClass:
                 self.time_stamp.append(self.r_dict["positions"][i]["timestamp"])
         else:
             print("Error: Something went wrong, try again.")
-            exit()
+            
         print(len(response.json()["positions"]))
 
     def __str__(self):
         return self.retString
     
     def getNextInfo(self):
-        return (self.azList.pop(0), self.elList.pop(0), self.time_stamp.pop(0))
-
+        if(len(self.azList) > 0):
+            return (self.azList.pop(0), self.elList.pop(0), self.time_stamp.pop(0))
+        else:
+            return (None, None, None)
     def getAzimuthArray(self):
         return self.azArray
 
     def getElevationArray(self):
         return self.elArray
+        
+    def get_satellite_name(self):
+        return self.satellite_name;
 
 
 

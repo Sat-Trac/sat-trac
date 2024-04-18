@@ -7,6 +7,6 @@ class AzMotor(Motor):
         super().__init__(enable_pin, pulse_pin, direction_pin, steps_per_rotation, gear_ratio)
         Motor.set_location(self,90)
         
-    def go_to_azimith(self, angle):
+    def go_to_azimuth(self, angle):
         
-        Motor.turn_to_degrees(self, abs(angle-360), wrap=True)
+        Motor.turn_to_degrees(self, abs(angle-360), wrap=False)

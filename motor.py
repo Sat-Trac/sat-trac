@@ -51,9 +51,8 @@ class Motor:
 
 
     def turn_to_degrees(self, target_angle, wrap=False):
-        print(wrap)
+        print(target_angle)
         if not wrap:
-            
             degrees_to_travel = self.current_position - target_angle
             
         else:
@@ -62,6 +61,7 @@ class Motor:
                 degrees_to_travel = self.current_position - target_angle
             else:
                 degrees_to_travel = self.current_position - (math.ceil(self.current_position/360) * 360) - target_angle
+                print(degrees_to_travel)
         self.turn_degrees(degrees_to_travel)
 
     def enable_motor(self):

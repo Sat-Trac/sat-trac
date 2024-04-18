@@ -8,5 +8,5 @@ class AltMotor(Motor):
         Motor.set_location(self,90);
 
     def turn_to_altitude(self, angle):
-        Motor.turn_to_degrees(self, max(0, min(angle, 180)), wrap=False)
+        Motor.turn_to_degrees(self, max(-90, min(angle, 90)), wrap=False)
 

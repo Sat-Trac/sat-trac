@@ -21,6 +21,7 @@ class App:
         ENA1 = 22 
         self.az = AzMotor(ENA1, PUL1, DIR1, 6400, 1)
         self.alt = AltMotor(ENA2, PUL2, DIR2,6400, 1)
+        self.satellite_data = None
         #setting title
         root.title("Satellite Tracker")
         #setting window size
@@ -62,13 +63,14 @@ class App:
         btn_zero_alt.place(x=100,y=60,width=70,height=25)
         btn_zero_alt["command"] = self.btn_zero_alt_command
 
-        lbox_sat_select=tk.Listbox(root)
-        lbox_sat_select["borderwidth"] = "1px"
+        self.entry_sat_select=tk.Entry(root)
+        self.entry_sat_select["borderwidth"] = "1px"
         ft = tkFont.Font(family='Times',size=10)
-        lbox_sat_select["font"] = ft
-        lbox_sat_select["fg"] = "#333333"
-        lbox_sat_select["justify"] = "center"
-        lbox_sat_select.place(x=390,y=20,width=180,height=30)
+        self.entry_sat_select["font"] = ft
+        self.entry_sat_select["fg"] = "#333333"
+        self.entry_sat_select["justify"] = "center"
+        self.entry_sat_select.place(x=390,y=20,width=180,height=30)
+        self.entry_sat_select.insert(0,"25544")
 
         rad_jog_speed_1=tk.Radiobutton(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -177,21 +179,21 @@ class App:
         GLabel_896["text"] = "AZIMUTH"
         GLabel_896.place(x=290,y=20,width=70,height=25)
 
-        lbl_cur_alt=tk.Label(root)
+        self.lbl_cur_alt=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
-        lbl_cur_alt["font"] = ft
-        lbl_cur_alt["fg"] = "#333333"
-        lbl_cur_alt["justify"] = "center"
-        lbl_cur_alt["text"] = "Curr Alt"
-        lbl_cur_alt.place(x=200,y=50,width=70,height=25)
+        self.lbl_cur_alt["font"] = ft
+        self.lbl_cur_alt["fg"] = "#333333"
+        self.lbl_cur_alt["justify"] = "center"
+        self.lbl_cur_alt["text"] = "Curr Alt"
+        self.lbl_cur_alt.place(x=200,y=50,width=70,height=25)
 
-        lbl_cur_az=tk.Label(root)
+        self.lbl_cur_az=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
-        lbl_cur_az["font"] = ft
-        lbl_cur_az["fg"] = "#333333"
-        lbl_cur_az["justify"] = "center"
-        lbl_cur_az["text"] = "Curr Az"
-        lbl_cur_az.place(x=290,y=50,width=70,height=25)
+        self.lbl_cur_az["font"] = ft
+        self.lbl_cur_az["fg"] = "#333333"
+        self.lbl_cur_az["justify"] = "center"
+        self.lbl_cur_az["text"] = "Curr Az"
+        self.lbl_cur_az.place(x=290,y=50,width=70,height=25)
 
         btn_az_plus=tk.Button(root)
         btn_az_plus["bg"] = "#f0f0f0"
@@ -229,13 +231,13 @@ class App:
         GLabel_218["text"] = "Local Time:"
         GLabel_218.place(x=10,y=190,width=70,height=25)
 
-        lbl_local_time=tk.Label(root)
+        self.lbl_local_time=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
-        lbl_local_time["font"] = ft
-        lbl_local_time["fg"] = "#333333"
-        lbl_local_time["justify"] = "left"
-        lbl_local_time["text"] = "00:00:00"
-        lbl_local_time.place(x=80,y=190,width=70,height=25)
+        self.lbl_local_time["font"] = ft
+        self.lbl_local_time["fg"] = "#333333"
+        self.lbl_local_time["justify"] = "left"
+        self.lbl_local_time["text"] = "00:00:00"
+        self.lbl_local_time.place(x=80,y=190,width=70,height=25)
 
         GLabel_504=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -245,13 +247,13 @@ class App:
         GLabel_504["text"] = "Zulu Time:"
         GLabel_504.place(x=470,y=190,width=70,height=25)
 
-        lbl_zulu_time=tk.Label(root)
+        self.lbl_zulu_time=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
-        lbl_zulu_time["font"] = ft
-        lbl_zulu_time["fg"] = "#333333"
-        lbl_zulu_time["justify"] = "left"
-        lbl_zulu_time["text"] = "00:00:00"
-        lbl_zulu_time.place(x=530,y=190,width=70,height=25)
+        self.lbl_zulu_time["font"] = ft
+        self.lbl_zulu_time["fg"] = "#333333"
+        self.lbl_zulu_time["justify"] = "left"
+        self.lbl_zulu_time["text"] = "00:00:00"
+        self.lbl_zulu_time.place(x=530,y=190,width=70,height=25)
 
     def btn_zero_all_command(self):
         # reset current altitude and azimuth positions to zero
@@ -300,7 +302,7 @@ class App:
 
     def btn_get_tracking_data_command(self):
         
-        self.satellite_data = APIClass()
+        self.satellite_data = APIClass(self.entry_sat_select.get())
         
         # use the api class methods to retrieve a set of data to use in tracking
 
@@ -339,24 +341,29 @@ class App:
         if(self.stop):
             return
         next_data = self.satellite_data.getNextInfo()
-        #while(time.time() <= next_data[2]):
-        #    if(self.stop):
-        #         return
+        if(next_data[0] is None):
+            return
+        while(time.time() <= next_data[2]):
+            if(self.stop):
+                 return
         print(next_data[0], next_data[1])
-        self.az.go_to_azimith(next_data[0])
+        self.az.go_to_azimuth(next_data[0])
         self.alt.turn_to_altitude(next_data[1])
-        root.after(50, lambda: self.track_satellite())
+        root.after(100, lambda: self.track_satellite())
         
-        
-        
+    def update_position(self):
+        self.lbl_cur_az["text"] = round(self.az.current_position,3);
+        self.lbl_cur_alt["text"] = round(self.alt.current_position,3);
+        print(self.satellite_data.get_satellite_name() if self.satellite_data is not None else "No Data")
+        self.lbl_local_time['text'] = datetime.now().strftime("%H:%M:%S")
+        self.lbl_zulu_time['text'] = datetime.utcnow().strftime("%X")
+        root.after(500, lambda: self.update_position())
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     
-
-    #root.after(100, lambda: app.btn_az_minus_command())
-    
+    root.after(100, lambda: app.update_position())
     root.mainloop()
 
 
