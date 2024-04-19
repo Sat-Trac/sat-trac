@@ -23,7 +23,7 @@ class Motor:
         self.steps_per_rotation = steps_per_rotation
         self.gear_ratio = gear_ratio
         self.current_position = 0
-        self.pulses_per_degree = 360 / steps_per_rotation * gear_ratio
+        self.pulses_per_degree = 360 / (steps_per_rotation * gear_ratio)
         self.current_direction = self.FORWARD
 
     def step(self):
@@ -38,7 +38,6 @@ class Motor:
         sleep(self.DELAY)
 
     def turn_degrees(self, degrees_to_turn):
-        print(self.current_position, degrees_to_turn, self)
         if degrees_to_turn <= 0:
             direction = self.FORWARD
         else:
@@ -51,7 +50,6 @@ class Motor:
 
 
     def turn_to_degrees(self, target_angle, wrap=False):
-        print(target_angle)
         if not wrap:
             degrees_to_travel = self.current_position - target_angle
             
@@ -61,7 +59,6 @@ class Motor:
                 degrees_to_travel = self.current_position - target_angle
             else:
                 degrees_to_travel = self.current_position - (math.ceil(self.current_position/360) * 360) - target_angle
-                print(degrees_to_travel)
         self.turn_degrees(degrees_to_travel)
 
     def enable_motor(self):

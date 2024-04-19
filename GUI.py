@@ -12,16 +12,18 @@ from datetime import datetime
 
 
 class App:
+        
     def __init__(self, root):
         PUL2 = 16  # Stepper Drive Pulses
         DIR2 = 20  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
         ENA2 = 21
-        PUL1 = 17  # Stepper Drive Pulses
+        PUL1 = 22  # Stepper Drive Pulses
         DIR1 = 27  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
-        ENA1 = 22 
-        self.az = AzMotor(ENA1, PUL1, DIR1, 6400, 1)
-        self.alt = AltMotor(ENA2, PUL2, DIR2,6400, 1)
+        ENA1 = 17
+        self.az = AzMotor(ENA1, PUL1, DIR1, 200, 50)
+        self.alt = AltMotor(ENA2, PUL2, DIR2, 200, 50)
         self.satellite_data = None
+        self.jog_speed = 0.1
         #setting title
         root.title("Satellite Tracker")
         #setting window size
@@ -257,53 +259,56 @@ class App:
 
     def btn_zero_all_command(self):
         # reset current altitude and azimuth positions to zero
-        print("command")
+        self.az.set_zero()
+        self.alt.set_zero()
 
 
     def btn_zero_az_command(self):
         # reset current azimuth position to zero
-        print("command")
+        self.az.set_zero()
 
 
     def btn_zero_alt_command(self):
         # reset current altitude position to zero
-        print("command")
+        self.alt.set_zero()
 
 
     def rad_jog_speed_1_command(self):
-        # probably don't need any code here
-        print("command")
+        self.jog_speed = 0.1
 
 
     def rad_jog_speed_2_command(self):
-        # probably don't need any code here
-        print("command")
+        self.jog_speed = 1
+        print(self.jog_speed)
 
 
     def rad_jog_speed_3_command(self):
-        # probably don't need any code here
-        print("command")
+        self.jog_speed = 10
 
 
     def btn_alt_minus_command(self):
+        self.alt.turn_degrees(self.jog_speed)
         # move the altitude negative by the amount selected in the jog speed radio buttons
-        print("command")
-
 
     def btn_alt_plus_command(self):
+        self.alt.turn_degrees(-self.jog_speed)
         # move the altitude positive by the amount selected in the jog speed radio buttons
-        print("command")
 
+    def btn_az_minus_command(self):
+        self.az.turn_degrees(self.jog_speed)
+        # move the azimuth negative by the amount selected in the jog speed radio buttons
 
+    def btn_az_plus_command(self):
+        self.az.turn_degrees(-self.jog_speed)
+        # move the azimuth positive by the amount selected in the jog speed radio buttons
+    
     def btn_goto_zero_command(self):
         # move the altitude and azimuth to zero positions
-        print("command")
-
+        self.az.goto_zero()
+        self.alt.goto_zero()
 
     def btn_get_tracking_data_command(self):
-        
         self.satellite_data = APIClass(self.entry_sat_select.get())
-        
         # use the api class methods to retrieve a set of data to use in tracking
 
     def btn_go_command(self):
@@ -324,46 +329,30 @@ class App:
         GPIO.cleanup()
         exit()
         # This should stop all movement immediately and re-enable other buttons on the form
-        print("command")
-
-
-    def btn_az_plus_command(self):
-        # move the azimuth positive by the amount selected in the jog speed radio buttons
-        print("command")
-
-
-
-    def btn_az_minus_command(self):
-        # move the azimuth negative by the amount selected in the jog speed radio buttons
-        print("command")
         
     def track_satellite(self):
         if(self.stop):
             return
-        next_data = self.satellite_data.getNextInfo()
-        if(next_data[0] is None):
+        next_data = self.satellite_data.get_data_at_time(round(time.time()))
+        if(next_data is None):
             return
-        while(time.time() <= next_data[2]):
-            if(self.stop):
-                 return
-        print(next_data[0], next_data[1])
-        self.az.go_to_azimuth(next_data[0])
-        self.alt.turn_to_altitude(next_data[1])
-        root.after(100, lambda: self.track_satellite())
+        self.az.go_to_azimuth(next_data["azimuth"])
+        self.alt.turn_to_altitude(next_data["elevation"])
+        root.after(750, lambda: self.track_satellite())
         
-    def update_position(self):
+    def update_GUI_contents(self):
         self.lbl_cur_az["text"] = round(self.az.current_position,3);
         self.lbl_cur_alt["text"] = round(self.alt.current_position,3);
         print(self.satellite_data.get_satellite_name() if self.satellite_data is not None else "No Data")
         self.lbl_local_time['text'] = datetime.now().strftime("%H:%M:%S")
         self.lbl_zulu_time['text'] = datetime.utcnow().strftime("%X")
-        root.after(500, lambda: self.update_position())
+        root.after(500, lambda: self.update_GUI_contents())
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     
-    root.after(100, lambda: app.update_position())
+    root.after(100, lambda: app.update_GUI_contents())
     root.mainloop()
 
 

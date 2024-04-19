@@ -8,5 +8,4 @@ class AzMotor(Motor):
         Motor.set_location(self,90)
         
     def go_to_azimuth(self, angle):
-        
         Motor.turn_to_degrees(self, abs(angle-360), wrap=False)

@@ -13,46 +13,23 @@ class APIClass:
         link = f'https://api.n2yo.com/rest/v1/satellite/positions/{sat_id}/41.4591/-84.306728/223/{length}/&apiKey=84KF72-KBE76V-3TF4JS-585A'
         response = requests.get(link)
         if response:
-            
-            self.retString = "Azimuth & Elevation Info"
-
             self.r_dict = response.json()
-            self.azList = []
-            self.elList = []
-            self.time_stamp = []
+            self.elaz_dict = {}
             self.satellite_name = self.r_dict["info"]["satname"]
             for i in range(0, length):
-                self.retString = self.retString + "\n" + "Azimuth: " + str(
-                    self.r_dict["positions"][i]["azimuth"]) + "; Elevation: " + str(
-                    self.r_dict["positions"][i]["elevation"]) + ";"
-                self.azList.append(self.r_dict["positions"][i]["azimuth"])
-                self.elList.append(self.r_dict["positions"][i]["elevation"])
-                self.time_stamp.append(self.r_dict["positions"][i]["timestamp"])
+                self.elaz_dict[self.r_dict["positions"][i]["timestamp"]] = {
+                    "azimuth" : self.r_dict["positions"][i]["azimuth"],
+                    "elevation" : self.r_dict["positions"][i]["elevation"]
+                }
+                
         else:
             print("Error: Something went wrong, try again.")
-            
-        print(len(response.json()["positions"]))
-
-    def __str__(self):
-        return self.retString
-    
-    def getNextInfo(self):
-        if(len(self.azList) > 0):
-            return (self.azList.pop(0), self.elList.pop(0), self.time_stamp.pop(0))
-        else:
-            return (None, None, None)
-    def getAzimuthArray(self):
-        return self.azArray
-
-    def getElevationArray(self):
-        return self.elArray
+    def get_data_at_time(self, time_second):
+        
+        try:
+            return self.elaz_dict[time_second]
+        except KeyError:
+            return None
         
     def get_satellite_name(self):
         return self.satellite_name;
-
-
-
-#api = APIClass()
-#print(api.getNextInfo())
-#print(api.getNextInfo())
-#print(api.__str__())
