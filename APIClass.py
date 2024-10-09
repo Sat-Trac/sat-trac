@@ -9,7 +9,7 @@ class APIClass:
             print("Invalid Satellite Tracking ID")
             return
 
-        with open("settings.json", "r") as jsonsettings:
+        with open("apikeys.json", "r") as jsonsettings:
             settings = json.load(jsonsettings)
 
         API_KEY = settings['api_Key']
