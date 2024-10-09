@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 from AzMotor import AzMotor
-from AltMotor import AltMotor
+from ElMotor import ElMotor
 import time
 import RPi.GPIO as GPIO
 from APIClass import APIClass
@@ -19,16 +19,16 @@ class App:
         PULSE_PIN_AZ = settings['pulse_pin_az']  # Stepper Drive Pulses
         DIR_PIN_AZ = settings['dir_pin_az']  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
         ENABLE_PIN_AZ = settings['enable_pin_az']
-        PULSE_PIN_ALT = settings['pulse_pin_alt']  # Stepper Drive Pulses
-        DIR_PIN_ALT = settings['dir_pin_alt']  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
-        ENABLE_PIN_ALT = settings['enable_pin_alt']
+        PULSE_PIN_EL = settings['pulse_pin_el']  # Stepper Drive Pulses
+        DIR_PIN_EL = settings['dir_pin_el']  # Controller Direction Bit (High for Controller default / LOW to Force a Direction Change).
+        ENABLE_PIN_EL = settings['enable_pin_el']
         STEPS_PER_ROTATION_AZ = settings['steps_per_rotation_az']
-        STEPS_PER_ROTATION_ALT = settings['steps_per_rotation_alt']
+        STEPS_PER_ROTATION_EL = settings['steps_per_rotation_el']
         GEAR_RATIO_AZ = settings['gear_ratio_az']
-        GEAR_RATIO_ALT = settings['gear_ratio_alt']
+        GEAR_RATIO_EL = settings['gear_ratio_el']
 
         self.az = AzMotor(ENABLE_PIN_AZ, PULSE_PIN_AZ, DIR_PIN_AZ, STEPS_PER_ROTATION_AZ, GEAR_RATIO_AZ)
-        self.alt = AltMotor(ENABLE_PIN_ALT, PULSE_PIN_ALT, DIR_PIN_ALT, STEPS_PER_ROTATION_ALT, GEAR_RATIO_ALT)
+        self.el = ElMotor(ENABLE_PIN_EL, PULSE_PIN_EL, DIR_PIN_EL, STEPS_PER_ROTATION_EL, GEAR_RATIO_EL)
         self.satellite_data = None
         self.jog_speed = 0.1
         # setting title
@@ -62,15 +62,15 @@ class App:
         btn_zero_az.place(x=100, y=20, width=70, height=25)
         btn_zero_az["command"] = self.btn_zero_az_command
 
-        btn_zero_alt = tk.Button(root)
-        btn_zero_alt["bg"] = "#f0f0f0"
+        btn_zero_el = tk.Button(root)
+        btn_zero_el["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Times', size=10)
-        btn_zero_alt["font"] = ft
-        btn_zero_alt["fg"] = "#000000"
-        btn_zero_alt["justify"] = "center"
-        btn_zero_alt["text"] = "Zero Alt"
-        btn_zero_alt.place(x=100, y=60, width=70, height=25)
-        btn_zero_alt["command"] = self.btn_zero_alt_command
+        btn_zero_el["font"] = ft
+        btn_zero_el["fg"] = "#000000"
+        btn_zero_el["justify"] = "center"
+        btn_zero_el["text"] = "Zero El"
+        btn_zero_el.place(x=100, y=60, width=70, height=25)
+        btn_zero_el["command"] = self.btn_zero_el_command
 
         self.entry_sat_select = tk.Entry(root)
         self.entry_sat_select["borderwidth"] = "1px"
@@ -112,25 +112,25 @@ class App:
         rad_jog_speed_3["value"] = "10"
         rad_jog_speed_3["command"] = self.rad_jog_speed_3_command
 
-        btn_alt_minus = tk.Button(root)
-        btn_alt_minus["bg"] = "#f0f0f0"
+        btn_el_minus = tk.Button(root)
+        btn_el_minus["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Times', size=10)
-        btn_alt_minus["font"] = ft
-        btn_alt_minus["fg"] = "#000000"
-        btn_alt_minus["justify"] = "center"
-        btn_alt_minus["text"] = "Alt -"
-        btn_alt_minus.place(x=200, y=150, width=70, height=25)
-        btn_alt_minus["command"] = self.btn_alt_minus_command
+        btn_el_minus["font"] = ft
+        btn_el_minus["fg"] = "#000000"
+        btn_el_minus["justify"] = "center"
+        btn_el_minus["text"] = "El -"
+        btn_el_minus.place(x=200, y=150, width=70, height=25)
+        btn_el_minus["command"] = self.btn_el_minus_command
 
-        btn_alt_plus = tk.Button(root)
-        btn_alt_plus["bg"] = "#f0f0f0"
+        btn_el_plus = tk.Button(root)
+        btn_el_plus["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Times', size=10)
-        btn_alt_plus["font"] = ft
-        btn_alt_plus["fg"] = "#000000"
-        btn_alt_plus["justify"] = "center"
-        btn_alt_plus["text"] = "Alt +"
-        btn_alt_plus.place(x=200, y=110, width=70, height=25)
-        btn_alt_plus["command"] = self.btn_alt_plus_command
+        btn_el_plus["font"] = ft
+        btn_el_plus["fg"] = "#000000"
+        btn_el_plus["justify"] = "center"
+        btn_el_plus["text"] = "El +"
+        btn_el_plus.place(x=200, y=110, width=70, height=25)
+        btn_el_plus["command"] = self.btn_el_plus_command
 
         btn_goto_zero = tk.Button(root)
         btn_goto_zero["bg"] = "#f0f0f0"
@@ -177,7 +177,7 @@ class App:
         GLabel_681["font"] = ft
         GLabel_681["fg"] = "#333333"
         GLabel_681["justify"] = "center"
-        GLabel_681["text"] = "ALTITUDE"
+        GLabel_681["text"] = "ELEVATION"
         GLabel_681.place(x=200, y=20, width=70, height=25)
 
         GLabel_896 = tk.Label(root)
@@ -188,13 +188,13 @@ class App:
         GLabel_896["text"] = "AZIMUTH"
         GLabel_896.place(x=290, y=20, width=70, height=25)
 
-        self.lbl_cur_alt = tk.Label(root)
+        self.lbl_cur_el = tk.Label(root)
         ft = tkFont.Font(family='Times', size=10)
-        self.lbl_cur_alt["font"] = ft
-        self.lbl_cur_alt["fg"] = "#333333"
-        self.lbl_cur_alt["justify"] = "center"
-        self.lbl_cur_alt["text"] = "Curr Alt"
-        self.lbl_cur_alt.place(x=200, y=50, width=70, height=25)
+        self.lbl_cur_el["font"] = ft
+        self.lbl_cur_el["fg"] = "#333333"
+        self.lbl_cur_el["justify"] = "center"
+        self.lbl_cur_el["text"] = "Curr El"
+        self.lbl_cur_el.place(x=200, y=50, width=70, height=25)
 
         self.lbl_cur_az = tk.Label(root)
         ft = tkFont.Font(family='Times', size=10)
@@ -214,15 +214,15 @@ class App:
         btn_az_plus.place(x=290, y=110, width=70, height=25)
         btn_az_plus["command"] = self.btn_az_plus_command
 
-        btn_alt_minus = tk.Button(root)
-        btn_alt_minus["bg"] = "#f0f0f0"
+        btn_el_minus = tk.Button(root)
+        btn_el_minus["bg"] = "#f0f0f0"
         ft = tkFont.Font(family='Times', size=10)
-        btn_alt_minus["font"] = ft
-        btn_alt_minus["fg"] = "#000000"
-        btn_alt_minus["justify"] = "center"
-        btn_alt_minus["text"] = "Az -"
-        btn_alt_minus.place(x=290, y=150, width=70, height=25)
-        btn_alt_minus["command"] = self.btn_az_minus_command
+        btn_el_minus["font"] = ft
+        btn_el_minus["fg"] = "#000000"
+        btn_el_minus["justify"] = "center"
+        btn_el_minus["text"] = "Az -"
+        btn_el_minus.place(x=290, y=150, width=70, height=25)
+        btn_el_minus["command"] = self.btn_az_minus_command
 
         GLabel_491 = tk.Label(root)
         ft = tkFont.Font(family='Times', size=10)
@@ -265,17 +265,17 @@ class App:
         self.lbl_zulu_time.place(x=530, y=190, width=70, height=25)
 
     def btn_zero_all_command(self):
-        # reset current altitude and azimuth positions to zero
+        # reset current elevation and azimuth positions to zero
         self.az.set_zero()
-        self.alt.set_zero()
+        self.el.set_zero()
 
     def btn_zero_az_command(self):
         # reset current azimuth position to zero
         self.az.set_zero()
 
-    def btn_zero_alt_command(self):
-        # reset current altitude position to zero
-        self.alt.set_zero()
+    def btn_zero_el_command(self):
+        # reset current elevation position to zero
+        self.el.set_zero()
 
     def rad_jog_speed_1_command(self):
         self.jog_speed = 0.1
@@ -289,13 +289,13 @@ class App:
         self.jog_speed = 10
         print(f"Jog Speed set to {self.jog_speed}")
 
-    # Move the altitude negative by the amount selected in the jog speed radio buttons
-    def btn_alt_minus_command(self):
-        self.alt.turn_degrees(self.jog_speed)
+    # Move the elevation negative by the amount selected in the jog speed radio buttons
+    def btn_el_minus_command(self):
+        self.el.turn_degrees(self.jog_speed)
 
-    # Move the altitude positive by the amount selected in the jog speed radio buttons
-    def btn_alt_plus_command(self):
-        self.alt.turn_degrees(-self.jog_speed)
+    # Move the elevation positive by the amount selected in the jog speed radio buttons
+    def btn_el_plus_command(self):
+        self.el.turn_degrees(-self.jog_speed)
 
     # Move the azimuth negative by the amount selected in the jog speed radio buttons
     def btn_az_minus_command(self):
@@ -305,10 +305,10 @@ class App:
     def btn_az_plus_command(self):
         self.az.turn_degrees(-self.jog_speed)
 
-    # Move the altitude and azimuth to zero positions
+    # Move the elevation and azimuth to zero positions
     def btn_goto_zero_command(self):
         self.az.goto_zero()
-        self.alt.goto_zero()
+        self.el.goto_zero()
 
     # Use the api class methods to retrieve a set of data to use in tracking
     def btn_get_tracking_data_command(self):
@@ -318,7 +318,7 @@ class App:
     # this button should be disabled until tracking data is retrieved
     # once pushed, all other buttons should be disabled except for STOP
     # it should look up the current time in the tracking data then use the
-    # AltMotor and AzMotor methods to go to the correct position
+    # ElMotor and AzMotor methods to go to the correct position
     def btn_go_command(self):
         self.stop = False
         self.track_satellite()
@@ -326,7 +326,7 @@ class App:
     def btn_stop_command(self):
         self.stop = True
         self.az.disable_motor()
-        self.alt.disable_motor()
+        self.el.disable_motor()
 
 
     def track_satellite(self):
@@ -336,12 +336,12 @@ class App:
         if next_data is None:
             return
         self.az.go_to_azimuth(next_data["azimuth"])
-        self.alt.turn_to_altitude(next_data["elevation"])
+        self.el.turn_to_elevation(next_data["elevation"])
         root.after(750, lambda: self.track_satellite())
 
     def update_gui_contents(self):
         self.lbl_cur_az["text"] = round(self.az.current_position, 3);
-        self.lbl_cur_alt["text"] = round(self.alt.current_position, 3);
+        self.lbl_cur_el["text"] = round(self.el.current_position, 3);
         # print(self.satellite_data.get_satellite_name() if self.satellite_data is not None else "No Data")
         self.lbl_local_time['text'] = datetime.now().strftime("%H:%M:%S")
         self.lbl_zulu_time['text'] = datetime.utcnow().strftime("%X")
