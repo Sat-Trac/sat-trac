@@ -336,7 +336,7 @@ class App:
         if next_data is None:
             return
         self.az.go_to_azimuth(next_data["azimuth"])
-        self.el.turn_to_elevation(next_data["elevation"])
+        self.el.go_to_elevation(next_data["elevation"])
         root.after(750, lambda: self.track_satellite())
 
     def update_gui_contents(self):

@@ -7,7 +7,7 @@ class ElMotor(Motor):
         super().__init__(enable_pin, pulse_pin, direction_pin, steps_per_rotation, gear_ratio)
 
     # Make sure  stays between 0 and 90 then turn to the required setting
-    def turn_to_elevation(self, angle):
+    def go_to_elevation(self, angle):
         print(f"el go to {angle}")
         if angle > 90:
             angle = 90

@@ -21,18 +21,34 @@ class Motor:
         self.steps_per_rotation = steps_per_rotation
         self.gear_ratio = gear_ratio
         self.current_position = 0
-        self.pulses_per_degree = 360 / (steps_per_rotation * gear_ratio)
+        self.degrees_per_pulse = 360 / (steps_per_rotation * gear_ratio)
         self.current_direction = self.FORWARD
 
     def step(self):
         GPIO.output(self.pulse_pin, GPIO.HIGH)
         sleep(self.DELAY)
         if self.current_direction == self.FORWARD:
-            self.current_position += self.pulses_per_degree
+            self.current_position += self.degrees_per_pulse
         else: 
-            self.current_position -= self.pulses_per_degree
+            self.current_position -= self.degrees_per_pulse
         GPIO.output(self.pulse_pin, GPIO.LOW)
         sleep(self.DELAY)
+
+    def step_with_delay(self, delay_time):
+        GPIO.output(self.pulse_pin, GPIO.HIGH)
+        sleep(delay_time)
+        if self.current_direction == self.FORWARD:
+            self.current_position += self.degrees_per_pulse
+        else:
+            self.current_position -= self.degrees_per_pulse
+        GPIO.output(self.pulse_pin, GPIO.LOW)
+        sleep(delay_time)
+
+    def calc_delay(self, degrees):
+        if degrees > 2:
+            return self.DELAY
+        else:
+            return .5/(degrees / self.degrees_per_pulse)  # Allowing half second per motor - change .5 to 1 when threading?
 
     def turn_degrees(self, degrees_to_turn):
         if degrees_to_turn <= 0:
@@ -41,10 +57,10 @@ class Motor:
             direction = self.REVERSE
         self.enable_motor()
         self.set_motor_direction(direction)
-        pulses_to_move = int(round(math.fabs(degrees_to_turn / self.pulses_per_degree)))
+        pulses_to_move = int(round(math.fabs(degrees_to_turn / self.degrees_per_pulse)))
         print(f"Beginning turn of {degrees_to_turn} : {pulses_to_move} pulses")
         for x in range(pulses_to_move):
-            self.step()
+            self.step_with_delay(self.calc_delay(degrees_to_turn))
         if self.current_position < 0:
                 self.current_position += 360
         print("Completed turn")
