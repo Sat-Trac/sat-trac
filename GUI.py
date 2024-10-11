@@ -178,7 +178,7 @@ class App:
         GLabel_681["fg"] = "#333333"
         GLabel_681["justify"] = "center"
         GLabel_681["text"] = "ELEVATION"
-        GLabel_681.place(x=200, y=20, width=70, height=25)
+        GLabel_681.place(x=200, y=20, width=80, height=25)
 
         GLabel_896 = tk.Label(root)
         ft = tkFont.Font(family='Times', size=10)
