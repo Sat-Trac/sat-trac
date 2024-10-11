@@ -9,10 +9,13 @@ class APIClass:
             print("Invalid Satellite Tracking ID")
             return
 
-        with open("apikeys.json", "r") as jsonsettings:
+        with open("apikeys.json", "r") as json_api_keys:
+            api_settings = json.load(json_api_keys)
+        API_KEY = api_settings['api_Key']
+        
+        with open("settings.json", "r") as jsonsettings:
             settings = json.load(jsonsettings)
 
-        API_KEY = settings['api_Key']
         TRACKING_SECONDS = settings['api_tracking_seconds']
 
         link = f'https://api.n2yo.com/rest/v1/satellite/positions/{sat_id}/41.4591/-84.306728/223/{TRACKING_SECONDS}/&apiKey={API_KEY}'
