@@ -45,6 +45,7 @@ class Motor:
         sleep(delay_time)
 
     def calc_delay(self, degrees):
+        degrees = math.fabs(degrees)
         if degrees > 2:
             return self.DELAY
         else:
