@@ -64,11 +64,15 @@ class Motor:
             self.step_with_delay(self.calc_delay(degrees_to_turn))
         if self.current_position < 0:
                 self.current_position += 360
+        if self.current_position > 360:
+            self.current_position -= 360
         print("Completed turn")
 
     def turn_to_degrees(self, target_angle):
 
         degrees_to_travel = self.current_position - target_angle
+        if math.fabs(degrees_to_travel) > 355:                          # 180?
+            degrees_to_travel = -(360-degrees_to_travel) # ???
         self.turn_degrees(degrees_to_travel)
 
     def enable_motor(self):
